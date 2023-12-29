@@ -30,6 +30,7 @@ function onElementsLoaded(elementsToObserve, callback) {
 
     function checkElementsStatus() {
         if (Object.values(elementsStatus).every(status => status)) {
+            observer.disconnect();
             callback();
         }
     }
@@ -60,6 +61,7 @@ function onElementsLoaded(elementsToObserve, callback) {
     checkElementsStatus();
 }
 
+
 const elementsToObserve = [
     '#txt2img_controlnet',
     '#img2img_controlnet',
@@ -72,6 +74,7 @@ const elementsToObserve = [
 
 document.addEventListener('DOMContentLoaded', function () {
     onUiLoaded(function () {
+        
         onElementsLoaded(elementsToObserve, () => {
             moveSymlinkerButtons("txt2img_script_container");
             moveSymlinkerButtons("img2img_script_container");
