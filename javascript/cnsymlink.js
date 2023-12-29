@@ -45,12 +45,15 @@ function observeDOM(elementsToObserve, callback) {
 const elementsToObserve = [
     '#txt2img_controlnet',
     '#img2img_controlnet',
-    '#controlnet_models_gdrive'
+    '#controlnet_models_gdrive',
+    '#cn_sd_symlinker_button',
+    '#cn_sdxl_symlinker_button'
 ];
-
-
-observeDOM(elementsToObserve, () => {
-    moveSymlinkerButtons("txt2img_script_container");
-    moveSymlinkerButtons("img2img_script_container");
+document.addEventListener('DOMContentLoaded', function () {
+    onUiLoaded(function () {
+        observeDOM(elementsToObserve, () => {
+            moveSymlinkerButtons("txt2img_script_container");
+            moveSymlinkerButtons("img2img_script_container");
+        });
+    });
 });
-
