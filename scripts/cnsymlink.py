@@ -54,7 +54,7 @@ class ExtensionTemplateScript(scripts.Script):
                             return gdshare_linker("ControlNet/models", controlnet_path)
                         def cn_sdxl():
                             return gdshare_linker("ControlNet/models_xl", controlnet_path)
-                        cnsymlinker_results = gr.Textbox(label="", lines=10, elem_id="cnsymlinker_results")
+                        cnsymlinker_results = gr.Textbox(value="нажми на кнопку ⬇️ чтобы добавить соответствующие модели", label="", lines=10, elem_id="cnsymlinker_results")
                         cn_sd_button = gr.Button("модели SD", elem_id="cn_sd_symlinker_button")
                         cn_sdxl_button = gr.Button("модели SDXL", elem_id="cn_sdxl_symlinker_button")
                         cn_sd_button.click(fn=cn_sd, outputs=cnsymlinker_results)
