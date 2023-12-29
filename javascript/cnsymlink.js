@@ -22,36 +22,57 @@ function moveSymlinkerButtons(scriptContainerId) {
 }
 
 
-function onElementsLoaded(observer, elementsToObserve, callback) {
-    const elementsFound = elementsToObserve.map(selector => document.querySelector(selector));
-    if (elementsFound.every(element => element !== null)) {
-        observer.disconnect();
-        callback();
-    }
-}
+function onElementsLoaded(elementsToObserve, callback) {
+    const elementsStatus = elementsToObserve.reduce((status, selector) => {
+        status[selector] = false;
+        return status;
+    }, {});
 
-function observeDOM(elementsToObserve, callback) {
+    function checkElementsStatus() {
+        if (Object.values(elementsStatus).every(status => status)) {
+            callback();
+        }
+    }
+
     const observer = new MutationObserver(mutations => {
-        onElementsLoaded(observer, elementsToObserve, callback);
+        mutations.forEach(mutation => {
+            if (mutation.addedNodes.length) {
+                elementsToObserve.forEach(selector => {
+                    if (document.querySelector(selector)) {
+                        elementsStatus[selector] = true;
+                    }
+                });
+                checkElementsStatus();
+            }
+        });
     });
 
     observer.observe(document.body, {
         childList: true,
         subtree: true
     });
-}
 
+    elementsToObserve.forEach(selector => {
+        if (document.querySelector(selector)) {
+            elementsStatus[selector] = true;
+        }
+    });
+    checkElementsStatus();
+}
 
 const elementsToObserve = [
     '#txt2img_controlnet',
     '#img2img_controlnet',
     '#controlnet_models_gdrive',
     '#cn_sd_symlinker_button',
-    '#cn_sdxl_symlinker_button'
+    '#cn_sdxl_symlinker_button',
+    '#txt2img_script_container',
+    '#img2img_script_container'
 ];
+
 document.addEventListener('DOMContentLoaded', function () {
     onUiLoaded(function () {
-        observeDOM(elementsToObserve, () => {
+        onElementsLoaded(elementsToObserve, () => {
             moveSymlinkerButtons("txt2img_script_container");
             moveSymlinkerButtons("img2img_script_container");
         });
