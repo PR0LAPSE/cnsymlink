@@ -5,6 +5,7 @@ import subprocess
 
 sdroot = "/".join(os.path.realpath(__file__).split("extensions")[0].split("/")[:-1])
 
+sdmodels = os.path.join(sdroot, "models/ControlNet")
 controlnet_path = os.path.join(sdroot, "extensions/rectal_control/")
 controlnet_temp = os.path.join(controlnet_path, "tmp")
 controlnet_models_path = os.path.join(controlnet_path, "models")
@@ -47,23 +48,29 @@ def gdshare_linker(gdpath, dest_path) -> str:
             return "на твоем гуглодиске не найдена общая папка с моделями контролнет"
         else:
             return "хз"
-        
+
 
 class ExtensionTemplateScript(scripts.Script):
-        def title(self):
-                return "добавить модели ControlNet"
-        def show(self, is_img2img):
-                return scripts.AlwaysVisible
-        def ui(self, is_img2img):
-                with gr.Accordion('модели ControlNet', elem_id="controlnet_models_gdrive", open=False):
-                        def cn_sd():
-                            return gdshare_linker("ControlNet/models", controlnet_models_path)
-                        def cn_sdxl():
-                            return gdshare_linker("ControlNet/models_xl", controlnet_models_path)
-                        cnsymlinker_results = gr.Textbox(value="нажми на кнопку ⬇️ чтобы добавить соответствующие модели", label="", lines=10, elem_id="cnsymlinker_results")
-                        cn_sd_button = gr.Button("модели SD", elem_id="cn_sd_symlinker_button")
-                        cn_sdxl_button = gr.Button("модели SDXL", elem_id="cn_sdxl_symlinker_button")
-                        cn_sd_button.click(fn=cn_sd, outputs=cnsymlinker_results)
-                        cn_sdxl_button.click(fn=cn_sdxl, outputs=cnsymlinker_results)
-                        
-                return [cnsymlinker_results, cn_sd_button, cn_sdxl_button]
+    def title(self):
+        return "добавить модели ControlNet"
+
+    def show(self, is_img2img):
+        return scripts.AlwaysVisible
+
+    def ui(self, is_img2img):
+        with gr.Accordion('модели ControlNet', elem_id="controlnet_models_gdrive", open=False):
+            def cn_sd():
+                gdshare_linker("ControlNet/bin/sd", sdmodels)
+                return gdshare_linker("ControlNet/models", controlnet_models_path)
+
+            def cn_sdxl():
+                gdshare_linker("ControlNet/bin/sdxl", sdmodels)
+                return gdshare_linker("ControlNet/models_xl", controlnet_models_path)
+
+            cnsymlinker_results = gr.Textbox(value="нажми на кнопку ⬇️ чтобы добавить соответствующие модели", label="", lines=10, elem_id="cnsymlinker_results")
+            cn_sd_button = gr.Button("модели SD", elem_id="cn_sd_symlinker_button")
+            cn_sdxl_button = gr.Button("модели SDXL", elem_id="cn_sdxl_symlinker_button")
+            cn_sd_button.click(fn=cn_sd, outputs=cnsymlinker_results)
+            cn_sdxl_button.click(fn=cn_sdxl, outputs=cnsymlinker_results)
+
+        return [cnsymlinker_results, cn_sd_button, cn_sdxl_button]
